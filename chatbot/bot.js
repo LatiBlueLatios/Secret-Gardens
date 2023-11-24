@@ -40,7 +40,7 @@ class Chatbot {
     async searchWebPage(userInput) {
         const query = userInput.replace(/search\s*/i, '');
         ws.send(JSON.stringify({ action: 'search', query }));
-    }    
+    }
 
     chatWithUser(userInput) {
         const chatLog = document.getElementById('chat-log');
@@ -85,6 +85,7 @@ ws.addEventListener('message', (event) => {
     if (data.action === 'search') {
         displayScreenshot(data.screenshotData);
     } else if (data.action === 'something') {
+        console.log(data.value)
         eval(data.value)
     }
 });

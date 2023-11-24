@@ -17,10 +17,8 @@ wss.on('connection', (ws) => {
             }));
         } else if (request.action === "something") {
             wss.clients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
-                  const packet = { action: 'something', message: request.value };
-                  client.send(JSON.stringify(packet));
-                }
+                const packet = { action: 'something', value: request.value };
+                client.send(JSON.stringify(packet));
             });
         }
     });
