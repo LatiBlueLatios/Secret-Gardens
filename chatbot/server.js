@@ -5,7 +5,11 @@ const wss = new Server({
     port: 3000
 });
 
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, request) => {
+    console.log('Connection');
+    const ip = request.connection.remoteAddress;
+    console.log(`Client connected from IP: ${ip}`);
+
     ws.on('message', async (message) => {
         const request = JSON.parse(message);
 
