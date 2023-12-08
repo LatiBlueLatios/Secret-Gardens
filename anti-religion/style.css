@@ -1,0 +1,17 @@
+#content {
+    padding: 4%;
+    border: 4px black;
+    border-style: solid;
+    border-radius: 4px;
+    background-color: bisque;
+}
+
+p {
+    font-family: HammerSmith One;
+    transition: transform 0.25s ease;
+    user-select: none;
+}
+
+p:hover {
+    transform: scale(1.05);
+}
