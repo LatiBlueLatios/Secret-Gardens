@@ -1,0 +1,33 @@
+body {
+    font-family: 'Courier New', monospace;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#game-container {
+    white-space: pre;
+    font-size: 14px;
+    line-height: 40px;
+    letter-spacing: 5px;
+    transition: background-color 0.5s ease-in-out;
+    border: 2px solid gray;
+}
+
+#notifications-container {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 60px;
+    border: 2px solid black;
+    color: #000000;
+    text-align: center;
+    padding: 10px 0;
+}
+
+button {
+    margin: 10px;
+}

