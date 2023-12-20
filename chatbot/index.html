@@ -1,22 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Chatbot</title>
+    <meta charset="utf-8" />
+    <title>ChatBot</title>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
 </head>
 
 <body>
-    <div id="chat-container">
-        <div id="chat-log"></div>
+    <div id="container">
+        <div id="sidebar">
+            <fieldset>
+                <legend>Tools
+                </legend>
+                <input type="file" id="uploadJson" accept=".json">
+                <button id="loadJsonButton">Load Responses</button>
+            </fieldset>
+        </div>
+        <div id="content">
+            <fieldset id="messageArea">
+                <legend>Messages
+                </legend>
+                <div id="messages"></div>
+            </fieldset>
+            <fieldset id="requestArea">
+                <legend>Chat</legend>
+                <legend>Send Message</legend>
+                <div>
+                    <textarea id="sendMessage" style="margin: 0px; width: 328px; height: 65px;"></textarea>
+                </div>
+                <div>
+                    <button id="sendButton">Send</button>
+                    [Ctrl + Enter]
+                </div>
+            </fieldset>
+        </div>
     </div>
-    <input type="text" id="user-input" placeholder="Type your message...">
-    <button id="send-button">Send</button>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.1.0/math.js"></script>
-    <script src="bot.js"></script>
+    <script src="bot.js" defer></script>
 </body>
 
 </html>

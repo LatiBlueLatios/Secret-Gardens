@@ -1,0 +1,14 @@
+{
+    "onload": {
+        "response": "Hello, how may I assist you today?"
+    },
+    "hello|hi": {
+        "response": "Hello there!"
+    },
+    "goodbye|bye": {
+        "response": "Goodbye!"
+    },
+    "default": {
+        "response": "Sorry, I didn’t understand that."
+    }
+}

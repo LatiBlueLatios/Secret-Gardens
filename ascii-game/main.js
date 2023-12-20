@@ -1,5 +1,5 @@
-import Grid from "./grid.js";
-import Player from "./player.js";
+import Grid from "./js/grid.js";
+import Player from "./js/entity/player.js";
 
 class Game {
     constructor(containerId, gridSize) {
@@ -19,8 +19,6 @@ class Game {
     }
 
     render() {
-        const darkness = this.dayNightCycle.checkCycle();
-        this.container.style.backgroundColor = `rgba(0, 0, 0, ${darkness})`;
         this.container.textContent = this.grid.toString();
     }
 
@@ -61,7 +59,7 @@ class DayNightCycle {
             this.game.uiManager.showNotification('The sunlight breaks through, day has arrived');
         }
 
-        //return dayPercentage;
+        return dayPercentage;
     }
 }
 

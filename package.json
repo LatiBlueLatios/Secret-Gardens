@@ -6,14 +6,12 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "bot": "node chatbot/server.js"
+    "bot": "node chatbot/server.js",
+    "game": "node game/server/index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.6.2",
-    "mathjs": "^12.1.0",
-    "puppeteer": "^21.5.2",
     "ws": "^8.14.2"
   }
 }

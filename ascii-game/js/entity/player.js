@@ -1,6 +1,6 @@
-import InputComponent from "./input.js";
+import InputComponent from "../input.js";
 
-class Player {
+class Player extends Entity {
     constructor(game, initialX, initialY) {
         this.game = game;
         this.x = initialX;
@@ -35,7 +35,33 @@ class Player {
             this.game.grid.updateCell(this.x, this.y, this.sprite);
             this.game.render();
         }
+
+        this.updateFacing(x, y);
     }
+
+    updateFacing(dx, dy) {
+        switch (true) {
+            case dx > 0:
+                this.facing = 'right';
+                break;
+            case dx < 0:
+                this.facing = 'left';
+                break;
+            case dy > 0:
+                this.facing = 'down';
+                break;
+            case dy < 0:
+                this.facing = 'up';
+                break;
+        }
+    }
+    
+    rotate(direction) {
+        if (['up', 'down', 'left', 'right'].includes(direction)) {
+            this.facing = direction;
+            this.game.render();
+        }
+    }    
 
     punch() {
         if (this.canPunch()) {
