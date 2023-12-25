@@ -7,6 +7,12 @@ class Server {
         });
 
         console.log('Im alive!');
+
+        this.wss.on('connection', (ws, req) => this.handleConnection(ws, req));
+    }
+
+    handleConnection(ws) {
+
     }
 }
 
