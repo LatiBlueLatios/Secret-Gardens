@@ -9,7 +9,7 @@ class WebSocketClient {
         this.sendMessageInput = document.querySelector("#sendMessage");
         this.connectButton = document.querySelector("#connectButton");
         this.disconnectButton = document.querySelector("#disconnectButton");
-        this.sendButton = document.querySelector("#endButton");
+        this.sendButton = document.querySelector("#sendButton");
         this.clearButton = document.querySelector("#clearMessage");
     }
 
@@ -19,24 +19,30 @@ class WebSocketClient {
         this.sendButton.addEventListener("click", () => this.send());
         this.clearButton.addEventListener("click", () => this.clearMessage());
 
-        this.serverUrl.addEventListener("keydown", ({key}) => key === "Enter" && this.open());
-        this.sendMessageInput.addEventListener("keydown", ({ctrlKey, key}) => {
-            if (key === "Enter" && ctrlKey) {
-                this.send();
-            }
-        });
+        if (this.serverUrl instanceof HTMLInputElement && this.sendMessageInput instanceof HTMLInputElement) {
+            this.serverUrl.addEventListener("keydown", ({ key }) => key === "Enter" && this.open());
+            this.sendMessageInput.addEventListener("keydown", ({ ctrlKey, key }) => {
+                if (key === "Enter" && ctrlKey) {
+                    this.send();
+                }
+            });
+        }
 
         this.toggleUI(false);
     }
 
     open() {
-        this.ws = new WebSocket(this.serverUrl.value);
-        this.ws.addEventListener("open", () => this.onOpen());
-        this.ws.addEventListener("close", () => this.onClose());
-        this.ws.addEventListener("message", ({data}) => this.onMessage(data));
-        this.ws.addEventListener("error", () => this.onError());
+        if (this.serverUrl instanceof HTMLInputElement) {
+            this.ws = new WebSocket(this.serverUrl.value);
+            this.ws.addEventListener("open", () => this.onOpen());
+            this.ws.addEventListener("close", () => this.onClose());
+            this.ws.addEventListener("message", ({ data }) => this.onMessage(data));
+            this.ws.addEventListener("error", () => this.onError());
 
-        this.connectionStatus.textContent = "OPENING ...";
+            this.connectionStatus.textContent = "OPENING ...";
+        } else {
+            console.error("serverUrl is not an input element");
+        }
     }
 
     close() {
@@ -47,13 +53,15 @@ class WebSocketClient {
 
     send() {
         const { addMessage, sendMessageInput, ws } = this;
-        
-        if (ws?.readyState === WebSocket.OPEN) {
+
+        if (ws?.readyState === WebSocket.OPEN && sendMessageInput instanceof HTMLTextAreaElement) {
             const message = sendMessageInput.value;
 
             ws.send(message);
-            addMessage.call(this, message, "SENT");
+            addMessage.call(this, message, "SENT");``
             sendMessageInput.value = "";
+        } else {
+            console.log('somethign happened')
         }
     }
 
@@ -68,12 +76,20 @@ class WebSocketClient {
         this.ws = undefined;
     }
 
+    /**
+     * @param {any} data
+     */
     onMessage(data) {
-        this.addMessage(data);
+        this.addMessage(data, "PRE");
     }
 
-    onError() {}
+    onError() {
+        this.addMessage("A ws error occured, check console");
+    }
 
+    /**
+     * @param {string} data
+     */
     addMessage(data, type = "") {
         const message = document.createElement("pre");
 
@@ -95,10 +111,20 @@ class WebSocketClient {
         }
     }
 
+    /**
+     * @param {boolean} isConnected
+     */
     toggleUI(isConnected) {
-        [this.serverUrl, this.sendMessageInput, this.sendButton].forEach(element => element.disabled = isConnected);
-        this.connectButton.style.display = isConnected ? "none" : "inline";
-        this.disconnectButton.style.display = isConnected ? "inline" : "none";
+        [this.serverUrl, this.sendMessageInput, this.sendButton].forEach((element) => {
+            if ("disabled" in element) {
+                element.disabled = !isConnected;
+            }
+        });
+
+        if (this.connectButton instanceof HTMLElement && this.disconnectButton instanceof HTMLElement) {
+            this.connectButton.style.display = isConnected ? "none" : "inline";
+            this.disconnectButton.style.display = !isConnected ? "none" : "inline";
+        }
     }
 }
 

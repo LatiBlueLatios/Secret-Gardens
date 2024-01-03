@@ -6,7 +6,6 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "bot": "node chatbot/server.js",
     "game": "node game/server/index.js"
   },
   "author": "",
@@ -15,7 +14,6 @@
     "ws": "^8.14.2"
   },
   "devDependencies": {
-    "eslint": "^8.56.0",
-    "eslint-config-hardcore": "^45.1.1"
+    "eslint": "^8.56.0"
   }
 }
