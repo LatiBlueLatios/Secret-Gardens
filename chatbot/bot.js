@@ -4,7 +4,7 @@ class Chatbot {
         // Oh wait, it was me...
         // Can't wait for the user to load 6.9 MB of data :trol:
         this.responses = {
-            "onload" : {
+            "onload": {
                 response: "Please upload a response file before continuing."
             }
         };
@@ -98,7 +98,7 @@ class Chatbot {
         const chatLog = document.getElementById("messages");
         const messageContainer = document.createElement("div");
         const message = document.createElement("p");
-    
+
         // Just like Sora reserves her words for Haru, the chatbot reserves its ‘thinking…’ for dramatic effect.
         if (role === "Chatbot") {
             message.textContent = "Chatbot: Thinking";
@@ -115,17 +115,31 @@ class Chatbot {
             const delay = Math.floor(Math.random() * 1000) + 3000;
             setTimeout(() => {
                 clearInterval(thinkingInterval);
+
+                message.style.opacity = '0'; 
+                setTimeout(() => {
+                    message.style.transition = 'opacity 1s ease';
+                })
+
                 message.textContent = `${role}: ${text}`;
+
+                setTimeout(() => {
+                    requestAnimationFrame(() => {
+                        message.style.opacity = '1';
+                    });
+                });
+
                 chatLog.scrollTop = chatLog.scrollHeight;
             }, delay);
         } else {
             message.textContent = `${role}: ${text}`;
-            messageContainer.appendChild(message);
             chatLog.appendChild(messageContainer);
+            messageContainer.appendChild(message);
+
             // Keep scrolling, just like your social media feed at 3 AM.
             chatLog.scrollTop = chatLog.scrollHeight;
         }
-    }    
+    }
 
     /**
      * @param {string} userInput
