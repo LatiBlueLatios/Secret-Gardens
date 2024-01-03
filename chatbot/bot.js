@@ -6,6 +6,8 @@ class Chatbot {
         this.responseLoaded = false;
     }
 
+    // TODO: Add animations because instant responses are apparently unsettling
+
     /**
      * @param {Blob} file
      */
@@ -16,26 +18,29 @@ class Chatbot {
             reader.onload = (e) => {
                 const result = e.target.result;
 
-                if (typeof result === 'string') {
+                if (typeof result === "string") {
                     try {
                         const responses = JSON.parse(result);
                         this.responses = responses;
-                        this.chatWithUser('onload', true);
+                        this.chatWithUser("onload", true);
                         this.responseLoaded = true;
-                        document.getElementById('sendMessage').removeAttribute('disabled');
+                        document.getElementById("sendMessage").removeAttribute("disabled");
                         resolve(responses);
                     } catch (error) {
-                        console.error("Could not parse chatbot responses:", error);
-                        reject("Sorry, I'm unable to load my response settings.");
+                        console.error("Tried to parse the responses and failed spectacularly:", error);
+                        reject("I’m too sophisticated for this JSON nonsense.");
                     }
                 } else {
-                    console.error("What the fuck man, I told you to upload a proper JSON file, fuck off");
+                    // When you expected a string but got something else, existential crisis ensues.
+                    console.error("I need JSON! This is like getting a sweater for Christmas, but worse.");
                 }
             };
 
-            reader.onerror = (e) => {
-                console.error("Failed to load file:", e);
-                reject("Sorry, I'm unable to load my response settings.");
+            reader.onerror = (/** @type {any} */ e) => {
+                // File loading, or the digital equivalent of “Oops, I dropped it.”
+                console.error("The file has decided to play hide and seek. Hint: It’s winning.", e);
+                // User soothing protocol initiated. Pat on back: optional.
+                reject("The File Oracle has denied your request.");
             };
 
             reader.readAsText(file);
@@ -65,7 +70,7 @@ class Chatbot {
         const sanitizedInput = input.toLowerCase().trim();
         let foundResponse;
         if (this.responseLoaded == false) {
-            foundResponse = `You fucked with the HTML didn't you? Smh`
+            foundResponse = "You fucked with the HTML didn't you? Smh"
         } else {
             foundResponse = this.responses.default.response;
         }
@@ -86,9 +91,9 @@ class Chatbot {
      * @param {any} text
      */
     appendMessageToChatLog(role, text) {
-        const chatLog = document.getElementById('messages');
-        const messageContainer = document.createElement('div');
-        const message = document.createElement('p');
+        const chatLog = document.getElementById("messages");
+        const messageContainer = document.createElement("div");
+        const message = document.createElement("p");
 
         message.textContent = `${role}: ${text}`;
         messageContainer.appendChild(message);
@@ -120,12 +125,12 @@ class Chatbot {
 
 const chatbot = new Chatbot();
 
-document.getElementById('sendButton').addEventListener('click', () => {
-    const userInputField = document.getElementById('sendMessage');
+document.getElementById("sendButton").addEventListener("click", () => {
+    const userInputField = document.getElementById("sendMessage");
 
     if (userInputField instanceof HTMLTextAreaElement) {
         const userInput = userInputField.value;
-        userInputField.value = '';
+        userInputField.value = "";
 
         if (userInput) {
             chatbot.chatWithUser(userInput);
@@ -133,7 +138,7 @@ document.getElementById('sendButton').addEventListener('click', () => {
     }
 });
 
-document.getElementById('uploadJson').addEventListener('change', async function (event) {
+document.getElementById("uploadJson").addEventListener("change", async function (event) {
     const input = event.target;
 
     if (input instanceof HTMLInputElement && input.files) {
@@ -141,9 +146,9 @@ document.getElementById('uploadJson').addEventListener('change', async function 
         if (file) {
             try {
                 const responses = await chatbot.loadResponsesFromFile(file);
-                console.log('Responses loaded successfully:', responses);
+                console.log("Responses loaded successfully:", responses);
             } catch (error) {
-                console.error('Error loading responses:', error);
+                console.error("Error loading responses:", error);
             }
         }
     }
