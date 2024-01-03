@@ -2,11 +2,14 @@ class Chatbot {
     constructor() {
         // What genuis thought it was a good idea to have responses as an object?
         // Oh wait, it was me...
-        this.responses = {};
+        // Can't wait for the user to load 6.9 MB of data :trol:
+        this.responses = {
+            "onload" : {
+                response: "Please upload a response file before continuing."
+            }
+        };
         this.responseLoaded = false;
     }
-
-    // TODO: Add animations because instant responses are apparently unsettling
 
     /**
      * @param {Blob} file
@@ -24,11 +27,11 @@ class Chatbot {
                         this.responses = responses;
                         this.chatWithUser("onload", true);
                         this.responseLoaded = true;
-                        document.getElementById("sendMessage").removeAttribute("disabled");
                         resolve(responses);
                     } catch (error) {
-                        console.error("Tried to parse the responses and failed spectacularly:", error);
-                        reject("I’m too sophisticated for this JSON nonsense.");
+                        // JSON threw a tantrum. It’s not me, it’s definitely you.
+                        console.error(`JSON parsing went about as well as Sora’s cooking attempts:`, error);
+                        reject("Turns out my JSON parsing skills are as good as Sora’s social skills.");
                     }
                 } else {
                     // When you expected a string but got something else, existential crisis ensues.
@@ -53,29 +56,30 @@ class Chatbot {
     getRandomResponse(responseCategory) {
         const response = this.responses[responseCategory];
 
-        // Support both single response strings or arrays of responses
+        /// Sometimes a response is like a box of chocolates, other times it’s just one chocolate.
         if (Array.isArray(response.response)) {
             const randomIndex = Math.floor(Math.random() * response.response.length);
             return response.response[randomIndex];
         }
 
-        console.log(response.response)
         return response.response;
     }
 
     /**
-     * @param {string} input
+     * @param {string} input - A line tossed into the vast ocean of code, let’s reel in a keeper.
      */
     processUserInput(input) {
         const sanitizedInput = input.toLowerCase().trim();
         let foundResponse;
         if (this.responseLoaded == false) {
-            foundResponse = "You fucked with the HTML didn't you? Smh"
+            // Our response bank seems to have taken a hiatus to a remote countryside, Yosuga no Sora style.
+            foundResponse = "Your responses? Lost in the countryside of uninitialised state. Try accessing after the train arrives."
         } else {
+            // Relying on our default response like Sora relies on Haru, unconditionally and a tad bit too much.
             foundResponse = this.responses.default.response;
         }
 
-        // Check against keys (which are regex patterns) to find the appropriate response
+        // Pulling out our Pokedex to match the input with the perfect response-mon.
         for (let pattern in this.responses) {
             if (new RegExp(pattern).test(sanitizedInput)) {
                 foundResponse = this.getRandomResponse(pattern);
@@ -94,13 +98,34 @@ class Chatbot {
         const chatLog = document.getElementById("messages");
         const messageContainer = document.createElement("div");
         const message = document.createElement("p");
+    
+        // Just like Sora reserves her words for Haru, the chatbot reserves its ‘thinking…’ for dramatic effect.
+        if (role === "Chatbot") {
+            message.textContent = "Chatbot: Thinking";
+            let thinkingDots = 0;
 
-        message.textContent = `${role}: ${text}`;
-        messageContainer.appendChild(message);
-        chatLog.appendChild(messageContainer);
+            chatLog.appendChild(messageContainer);
+            messageContainer.appendChild(message);
 
-        chatLog.scrollTop = chatLog.scrollHeight;
-    }
+            const thinkingInterval = setInterval(() => {
+                thinkingDots = (thinkingDots + 1) % 4;
+                message.textContent = `Chatbot: Thinking${'.'.repeat(thinkingDots)}`;
+            }, 500); // Update the ellipsis every half a second to optimally milk the tension.
+
+            const delay = Math.floor(Math.random() * 1000) + 3000;
+            setTimeout(() => {
+                clearInterval(thinkingInterval);
+                message.textContent = `${role}: ${text}`;
+                chatLog.scrollTop = chatLog.scrollHeight;
+            }, delay);
+        } else {
+            message.textContent = `${role}: ${text}`;
+            messageContainer.appendChild(message);
+            chatLog.appendChild(messageContainer);
+            // Keep scrolling, just like your social media feed at 3 AM.
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
+    }    
 
     /**
      * @param {string} userInput
@@ -118,12 +143,15 @@ class Chatbot {
                     this.appendMessageToChatLog("Chatbot", error);
                 });
         } else {
+            // A direct response, skipping the postal service of backend servers.
             this.appendMessageToChatLog("Chatbot", response);
         }
     }
 }
 
+// Beep boop boop beep
 const chatbot = new Chatbot();
+chatbot.chatWithUser("onload", true);
 
 document.getElementById("sendButton").addEventListener("click", () => {
     const userInputField = document.getElementById("sendMessage");
